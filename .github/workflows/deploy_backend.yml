@@ -1,0 +1,27 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: 安装依赖
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 部署到 Render（触发Webhook）
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
